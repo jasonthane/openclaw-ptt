@@ -4,11 +4,14 @@ After=network.target sound.target
 
 [Service]
 # Replace <user> with the username running OpenClaw
+# Replace <uid> with that user's UID (run: id -u <user>)
 User=<user>
 Group=<user>
-SupplementaryGroups=input audio
+SupplementaryGroups=input
 Environment=HOME=/home/<user>
 Environment=PYTHONUNBUFFERED=1
+# Required for PipeWire/PulseAudio access from a system service context
+Environment=XDG_RUNTIME_DIR=/run/user/<uid>
 ExecStart=/home/<user>/ptt-env/bin/python3 /home/<user>/ptt.py
 Restart=on-failure
 RestartSec=5

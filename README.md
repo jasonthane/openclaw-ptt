@@ -97,8 +97,8 @@ Hold your PTT key, speak, release. You should see transcription and a reply from
 # Copy ptt.py to your home directory
 cp ptt.py ~/ptt.py
 
-# Edit the service file — replace <user> with your username
-sed -i "s/<user>/$USER/g" openclaw-ptt.service
+# Edit the service file — replace <user> with your username and <uid> with your UID
+sed -i "s/<user>/$USER/g; s/<uid>/$(id -u)/g" openclaw-ptt.service
 
 # Install and enable
 sudo cp openclaw-ptt.service /etc/systemd/system/
@@ -133,6 +133,11 @@ The `openclaw agent` command sends the transcription to your running OpenClaw ga
 - Check the path in `KEYBOARD_DEVICE` matches `ls /dev/input/by-id/`
 - Verify user is in `input` group: `groups $USER`
 - As a system service, `SupplementaryGroups=input audio` must be set (requires system service, not user service)
+
+**Sound effects stop working after reboot (PTT still works):**
+- Most likely cause: `XDG_RUNTIME_DIR` not set in the service, so `mpg123` can't reach PipeWire/PulseAudio
+- Fix: ensure `Environment=XDG_RUNTIME_DIR=/run/user/<uid>` is in the service file (see template)
+- Also note: Ubuntu 25.10+ does not have an `audio` group — remove it from `SupplementaryGroups` if present
 
 **No audio / silence returned:**
 - Check mic with: `arecord -D plughw:X,Y -f S16_LE -r 16000 -c 1 test.wav`
