@@ -1,0 +1,19 @@
+[Unit]
+Description=OpenClaw PTT daemon
+After=network.target sound.target
+
+[Service]
+# Replace <user> with the username running OpenClaw
+User=<user>
+Group=<user>
+SupplementaryGroups=input audio
+Environment=HOME=/home/<user>
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/home/<user>/ptt-env/bin/python3 /home/<user>/ptt.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
